@@ -36,8 +36,9 @@ import java.net.URL;
 public class MainActivity extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener {
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener; //Firebase i sürekli dinlemek için
-    private static final int requestCode_SIGN_IN = 1461;
+    private static final int requestCode_SIGN_IN = 1461;//İstediğimiz değeri verebiliriz sabit olmak zorunda (on Aktivity Result için)
     private GoogleApiClient mGoogleApiClient;
+    //Buradan sonrası gerekli tanımlamalar
     private TextView mTextViewAd;
     private Button mSignInButtonGoogle, mSignOutButtonGoogle, mSignInButtonFacebook, mSignOutButtonFacebook;
     private String KullaniciID = "null";
@@ -47,7 +48,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        start();
+        start();//Layouttaki viewleri atama işlemi için yazılan fonk
         try {
             mAuth = FirebaseAuth.getInstance();//Bağlantı kuruldu
             mAuthListener = new FirebaseAuth.AuthStateListener() {//Sürekli dinleme sağlantı
@@ -74,7 +75,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
                     .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
                     .build();
         } catch (Exception ex) {
-            Log.e("onCreate", ex.toString());
+            Log.e("Hata onCreate'de ->", ex.toString());
         }
     }
 
@@ -116,13 +117,12 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
     }
 
     public void gecis(View view) {//Google Map ekranına geçiş
-        //KullaniciID
+        //KullaniciID yolla.
         try {
             Intent i = new Intent(MainActivity.this, MapsActivity.class);
-            //startActivity(new Intent(MainActivity.this, MapsActivity.class));
             i.putExtra("veri", KullaniciID);
             startActivity(i);
-            Log.e("Geçiş", "intent için basıldı");
+            Log.e("Geçiş", "Maps aktivity e geçildi.");
         } catch (Exception ex) {
             Log.e("Geçiş HATA !", "HATA-->" + ex.toString());
         }
