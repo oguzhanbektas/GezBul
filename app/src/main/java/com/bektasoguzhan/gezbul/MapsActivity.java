@@ -20,7 +20,11 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.Status;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.ui.PlaceAutocompleteFragment;
 import com.google.android.gms.location.places.ui.PlaceSelectionListener;
@@ -28,10 +32,17 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
-public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
+public class MapsActivity extends FragmentActivity implements OnMapReadyCallback,
+        GoogleApiClient.ConnectionCallbacks,
+        GoogleApiClient.OnConnectionFailedListener,
+        com.google.android.gms.location.LocationListener,
+        GoogleMap.OnMarkerClickListener,
+        GoogleMap.OnMarkerDragListener {
     private static String LOG_TAG = "MapsActivity";
     private GoogleMap mMap;
     LocationManager mLocationManager;
@@ -39,6 +50,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private TextView txtSelectedPlaceName;//DENEME İÇİN YAPILDI PROJE BİTERKEN SİL.
     private String KullaciID = "null";
     private Button mHospitalButton, mSchoolButton, mCafeButton;
+    GoogleApiClient mGoogleApiClient;
+    LocationRequest mLocationRequest;
+    Location mLastLocation;
+    Marker mCurrentLocation;
+    int PROXIMITY_RADIUS = 10000;//Sen çapın
+    double latitude, longitude, end_latitude, end_longitude;//Konum değişkenleri
+
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -52,7 +70,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         autoComplete();
     }
 
-    private void start() {
+    private void start() {//Tanımlamalar
         mHospitalButton = (Button) findViewById(R.id.btnHospital);
         mSchoolButton = (Button) findViewById(R.id.btnSchool);
         mCafeButton = (Button) findViewById(R.id.btnCafe);
@@ -62,30 +80,51 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         txtSelectedPlaceName.setText(KullaciID);//Deneme İçin
     }
 
-    public void hospital(View view) {
-        Toast.makeText(MapsActivity.this, "HOSPİTAL", Toast.LENGTH_SHORT).show();
-        /*Object dataTransfer[] = new Object[2];
+
+    public void hospital(View view) {//Veri yollama Sadece Stringler değişiyor düzenleme yapılabilir.
+        Object dataTransfer[] = new Object[2];
         GetNearbyPlacesData getNearbyPlacesData = new GetNearbyPlacesData();
+        Toast.makeText(MapsActivity.this, "HOSPİTAL", Toast.LENGTH_SHORT).show();
         mMap.clear();
         String hospital = "hospital";
         String url = getUrl(latitude, longitude, hospital);
+
         dataTransfer[0] = mMap;
         dataTransfer[1] = url;
 
         getNearbyPlacesData.execute(dataTransfer);
-        Toast.makeText(MapsActivity.this, "Yakındaki Hastahaneler Gösteriliyor", Toast.LENGTH_SHORT).show();
-*/
     }
 
+
     public void school(View view) {
-        Toast.makeText(MapsActivity.this, "SCHOOL", Toast.LENGTH_SHORT).show();
+        Object dataTransfer[] = new Object[2];
+        GetNearbyPlacesData getNearbyPlacesData = new GetNearbyPlacesData();
+        Toast.makeText(MapsActivity.this, "school", Toast.LENGTH_SHORT).show();
+        mMap.clear();
+        String school = "school";
+        String url = getUrl(latitude, longitude, school);
+
+        dataTransfer[0] = mMap;
+        dataTransfer[1] = url;
+
+        getNearbyPlacesData.execute(dataTransfer);
     }
 
     public void cafe(View view) {
-        Toast.makeText(MapsActivity.this, "CAFE", Toast.LENGTH_SHORT).show();
+        Object dataTransfer[] = new Object[2];
+        GetNearbyPlacesData getNearbyPlacesData = new GetNearbyPlacesData();
+        Toast.makeText(MapsActivity.this, "cafe", Toast.LENGTH_SHORT).show();
+        mMap.clear();
+        String cafe = "cafe";
+        String url = getUrl(latitude, longitude, cafe);
+
+        dataTransfer[0] = mMap;
+        dataTransfer[1] = url;
+
+        getNearbyPlacesData.execute(dataTransfer);
     }
 
-    private void autoComplete() {
+    private void autoComplete() {//Otomatik arama yapmak için
         PlaceAutocompleteFragment autocompleteFragment = (PlaceAutocompleteFragment)
                 getFragmentManager().findFragmentById(R.id.fragment_autocomplete);
 
@@ -96,11 +135,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 txtSelectedPlaceName.setText(String.format("Seçilen Yer : %s  - %s", place.getName(), place.getAddress()));//Deneme için
                 LatLng location = new LatLng(place.getLatLng().latitude, place.getLatLng().longitude);
                 mMap.addMarker(new MarkerOptions().position(location).title(place.getName().toString()));
-                mMap.moveCamera(CameraUpdateFactory.newLatLng(location));
-                //mMap.animateCamera(CameraUpdateFactory.zoomTo(14));
-                //mMap.animateCamera(CameraUpdateFactory.zoomBy(12));
-                mMap.animateCamera(CameraUpdateFactory.zoomTo(17));
-
+                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(location, 17));
             }
 
             @Override
@@ -115,46 +150,35 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
 
-        mLocationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
-        mLocationListener = new LocationListener() {
-            @Override
-            public void onLocationChanged(Location location) {
-
-            }
-
-            @Override
-            public void onStatusChanged(String provider, int status, Bundle extras) {
-
-            }
-
-            @Override
-            public void onProviderEnabled(String provider) {
-
-            }
-
-            @Override
-            public void onProviderDisabled(String provider) {
-
-            }
-        };
         //Kullanıcı iznini alma
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
         } else {//Eğer izin daha önceden alındıysa
             try {
-
-                mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, mLocationListener);
-
+                buildGoogleApiClient();
+             /*   mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, mLocationListener);
                 mMap.clear();
-
                 Location lastLocation = mLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
                 LatLng lastUserLocation = new LatLng(lastLocation.getLatitude(), lastLocation.getLongitude());
-                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(lastUserLocation, 17));
-                mMap.setMyLocationEnabled(true);
+                Log.e("İzin verilmiş", "Koordinalatlar" + lastLocation.getLatitude() + "," + lastLocation.getLongitude());
+                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(lastUserLocation, 17));*/
+
             } catch (Exception ex) {
                 Log.d("İzin zaten verilmiş", ex.toString());
             }
         }
+        mMap.setMyLocationEnabled(true);
+        mMap.setOnMarkerDragListener(this);
+        mMap.setOnMarkerClickListener(this);
+    }
+
+    protected synchronized void buildGoogleApiClient() {
+        mGoogleApiClient = new GoogleApiClient.Builder(this)
+                .addConnectionCallbacks(this)
+                .addOnConnectionFailedListener(this)
+                .addApi(LocationServices.API)
+                .build();
+        mGoogleApiClient.connect();
     }
 
     @Override//Eğer kullanıcının izni yoksa buraya geliyor . Burdan izin işlemleri yapılacak.
@@ -163,17 +187,122 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         if (grantResults.length > 0) {
             if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
                 try {
-
-                    mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, mLocationListener);
+                    buildGoogleApiClient();
+               /*     mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, mLocationListener);
                     mMap.clear();
                     Location lastLocation = mLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
                     LatLng lastUserLocation = new LatLng(lastLocation.getLatitude(), lastLocation.getLongitude());
-                    mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(lastUserLocation, 17));
-                    mMap.setMyLocationEnabled(true);
+                    Log.e("İzin ilk kez verildiyse", "Koordinalatlar" + lastLocation.getLatitude() + "," + lastLocation.getLongitude());
+                    mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(lastUserLocation, 17));*/
                 } catch (Exception ex) {
                     Log.e("İzin verirken hata", ex.toString());
                 }
             }
         }
+    }
+
+    @Override
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+
+    }
+
+    @Override
+    public void onConnected(@Nullable Bundle bundle) {
+        mLocationRequest = new LocationRequest();
+        mLocationRequest.setInterval(1000);
+        mLocationRequest.setFastestInterval(1000);
+        mLocationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
+        if (ContextCompat.checkSelfPermission(this,
+                Manifest.permission.ACCESS_FINE_LOCATION)
+                == PackageManager.PERMISSION_GRANTED) {
+            LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
+        }
+    }
+
+    @Override
+    public void onConnectionSuspended(int i) {
+
+    }
+
+    @Override
+    public void onLocationChanged(Location location) {
+        Log.d("onLocationChanged", "entered");
+
+        mLastLocation = location;
+        if (mCurrentLocation != null) {
+            mCurrentLocation.remove();
+        }
+
+        latitude = location.getLatitude();
+        longitude = location.getLongitude();
+
+
+        LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
+        MarkerOptions markerOptions = new MarkerOptions();
+        markerOptions.position(latLng);
+        markerOptions.draggable(true);
+        markerOptions.title("Buradasın");
+        markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE));
+        mCurrentLocation = mMap.addMarker(markerOptions);
+
+        //Kamera hareketi
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 17));
+        //mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
+        //mMap.animateCamera(CameraUpdateFactory.zoomTo(17));
+
+
+        //Toast.makeText(MapsActivity.this, "Your Current Location", Toast.LENGTH_LONG).show();
+
+
+        //stop location updates
+        if (mGoogleApiClient != null) {
+            LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
+            Log.d("onLocationChanged", "Locasyon Güncellendi");
+        }
+    }
+
+    @Override
+    public boolean onMarkerClick(Marker marker) {
+        marker.setDraggable(true);
+        return false;
+    }
+
+    @Override
+    public void onMarkerDragStart(Marker marker) {
+
+    }
+
+    @Override
+    public void onMarkerDrag(Marker marker) {
+
+    }
+
+    @Override
+    public void onMarkerDragEnd(Marker marker) {
+        end_latitude = marker.getPosition().latitude;
+        end_longitude = marker.getPosition().longitude;
+
+        Log.d("end_lat", "" + end_latitude);
+        Log.d("end_lng", "" + end_longitude);
+    }
+
+    private String getDirectionsUrl() {//Şu anlık çalışmıyor. Gerek varmı sor ?
+        StringBuilder googleDirectionsUrl = new StringBuilder("https://maps.googleapis.com/maps/api/directions/json?");
+        googleDirectionsUrl.append("origin=" + latitude + "," + longitude);
+        googleDirectionsUrl.append("&destination=" + end_latitude + "," + end_longitude);
+        googleDirectionsUrl.append("&key=" + "AIzaSyADks2GNlxgv0Se-Cs6iqRK5WY_7hWs1nc");
+
+        return googleDirectionsUrl.toString();
+    }
+
+    private String getUrl(double latitude, double longitude, String nearbyPlace) {//Yakındaki yerleri çektiğimiz yer.
+        StringBuilder googlePlacesUrl = new StringBuilder("https://maps.googleapis.com/maps/api/place/nearbysearch/json?");
+        googlePlacesUrl.append("location=" + latitude + "," + longitude);
+        googlePlacesUrl.append("&radius=" + PROXIMITY_RADIUS);
+        googlePlacesUrl.append("&type=" + nearbyPlace);
+        googlePlacesUrl.append("&sensor=true");
+        googlePlacesUrl.append("&key=" + "AIzaSyADks2GNlxgv0Se-Cs6iqRK5WY_7hWs1nc");
+        Log.d("getUrl", googlePlacesUrl.toString());
+        return (googlePlacesUrl.toString());
     }
 }
