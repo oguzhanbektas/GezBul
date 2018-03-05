@@ -16,25 +16,26 @@
 
         <Button
             android:id="@+id/signIn_button"
-            android:layout_width="wrap_content"
-            android:layout_height="70dp"
+            android:layout_width="180dp"
+            android:layout_height="80dp"
             android:layout_gravity="center"
             android:layout_marginTop="25dp"
+            android:background="@drawable/google"
             android:onClick="signIn"
-            android:text="Google+ İle Bağlan"
             android:visibility="visible"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            tools:ignore="MissingConstraints" />
+            tools:ignore="MissingConstraints"
+            android:layout_marginRight="20dp"/>
 
         <Button
             android:id="@+id/signIn_button_facebook"
-            android:layout_width="wrap_content"
-            android:layout_height="70dp"
+            android:layout_width="180dp"
+            android:layout_height="80dp"
             android:layout_gravity="center"
             android:layout_marginTop="25dp"
+            android:background="@drawable/facebook"
             android:onClick="signInFacebook"
-            android:text="Facebook İle Bağlan"
             android:visibility="visible"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
@@ -51,9 +52,9 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <ImageView
+            android:id="@+id/imageView"
             android:layout_width="match_parent"
             android:layout_height="70dp"
-            android:id="@+id/imageView"
             app:srcCompat="@android:drawable/btn_star" />
 
         <TextView
@@ -76,8 +77,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="70dp"
                 android:layout_gravity="center"
-                android:layout_marginTop="20dp"
                 android:layout_marginRight="20dp"
+                android:layout_marginTop="20dp"
                 android:onClick="signOut"
                 android:text="Google+ Çıkış Yap"
                 android:visibility="visible"
@@ -89,8 +90,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="70dp"
                 android:layout_gravity="center"
-                android:onClick="signOutFacebook"
                 android:layout_marginTop="20dp"
+                android:onClick="signOutFacebook"
                 android:text="Facebook Çıkış Yap"
                 android:visibility="visible" />
         </LinearLayout>
@@ -107,7 +108,7 @@
         <Button
             android:layout_width="wrap_content"
             android:layout_height="70dp"
-            android:layout_gravity="center"
+            android:layout_gravity="center|bottom"
             android:onClick="gecis"
             android:text="Devam Et" />
 

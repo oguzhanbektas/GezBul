@@ -119,10 +119,10 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
     public void gecis(View view) {//Google Map ekranına geçiş
         //KullaniciID yolla.
         try {
-            Intent i = new Intent(MainActivity.this, MapsActivity.class);
-            i.putExtra("veri", KullaniciID);
+            Intent i = new Intent(MainActivity.this, SelectionActivity.class);
+            i.putExtra("kullaniciID", KullaniciID);
             startActivity(i);
-            Log.e("Geçiş", "Maps aktivity e geçildi.");
+            Log.e("Geçiş", "SelectionActivity aktivity e geçildi.");
         } catch (Exception ex) {
             Log.e("Geçiş HATA !", "HATA-->" + ex.toString());
         }

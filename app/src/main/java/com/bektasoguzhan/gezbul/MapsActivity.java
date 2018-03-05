@@ -48,8 +48,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     LocationManager mLocationManager;
     LocationListener mLocationListener;
     private TextView txtSelectedPlaceName;//DENEME İÇİN YAPILDI PROJE BİTERKEN SİL.
-    private String KullaciID = "null";
-    private Button mHospitalButton, mSchoolButton, mCafeButton;
+    private String KullaciID = "null", selectedType = "none";
     GoogleApiClient mGoogleApiClient;
     LocationRequest mLocationRequest;
     Location mLastLocation;
@@ -71,57 +70,29 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     private void start() {//Tanımlamalar
-        mHospitalButton = (Button) findViewById(R.id.btnHospital);
-        mSchoolButton = (Button) findViewById(R.id.btnSchool);
-        mCafeButton = (Button) findViewById(R.id.btnCafe);
         txtSelectedPlaceName = (TextView) findViewById(R.id.txtSelectedPlaceName);
         Intent i = getIntent();
-        KullaciID = i.getStringExtra("veri");//G+ veya Facebookla giren kullanıcıların ID sini çekmek için.
+        KullaciID = i.getStringExtra("kullaniciID");//G+ veya Facebookla giren kullanıcıların ID sini çekmek için.
         txtSelectedPlaceName.setText(KullaciID);//Deneme İçin
+        selectedType = i.getStringExtra("selectedType");
+        txtSelectedPlaceName.setText(selectedType);//Deneme İçin
     }
 
+    public void fill_select(String select) {
+        if (select == "none") {
 
-    public void hospital(View view) {//Veri yollama Sadece Stringler değişiyor düzenleme yapılabilir.
-        Object dataTransfer[] = new Object[2];
-        GetNearbyPlacesData getNearbyPlacesData = new GetNearbyPlacesData();
-        Toast.makeText(MapsActivity.this, "HOSPİTAL", Toast.LENGTH_SHORT).show();
-        mMap.clear();
-        String hospital = "hospital";
-        String url = getUrl(latitude, longitude, hospital);
+        } else {
+            Object dataTransfer[] = new Object[2];
+            GetNearbyPlacesData getNearbyPlacesData = new GetNearbyPlacesData();
+            Toast.makeText(MapsActivity.this, select, Toast.LENGTH_SHORT).show();
+            String url = getUrl(latitude, longitude, select);
+            mMap.clear();
+            dataTransfer[0] = mMap;
+            dataTransfer[1] = url;
 
-        dataTransfer[0] = mMap;
-        dataTransfer[1] = url;
-
-        getNearbyPlacesData.execute(dataTransfer);
-    }
-
-
-    public void school(View view) {
-        Object dataTransfer[] = new Object[2];
-        GetNearbyPlacesData getNearbyPlacesData = new GetNearbyPlacesData();
-        Toast.makeText(MapsActivity.this, "school", Toast.LENGTH_SHORT).show();
-        mMap.clear();
-        String school = "school";
-        String url = getUrl(latitude, longitude, school);
-
-        dataTransfer[0] = mMap;
-        dataTransfer[1] = url;
-
-        getNearbyPlacesData.execute(dataTransfer);
-    }
-
-    public void cafe(View view) {
-        Object dataTransfer[] = new Object[2];
-        GetNearbyPlacesData getNearbyPlacesData = new GetNearbyPlacesData();
-        Toast.makeText(MapsActivity.this, "cafe", Toast.LENGTH_SHORT).show();
-        mMap.clear();
-        String cafe = "cafe";
-        String url = getUrl(latitude, longitude, cafe);
-
-        dataTransfer[0] = mMap;
-        dataTransfer[1] = url;
-
-        getNearbyPlacesData.execute(dataTransfer);
+            getNearbyPlacesData.execute(dataTransfer);
+        }
+        select = "none";
     }
 
     private void autoComplete() {//Otomatik arama yapmak için
@@ -163,6 +134,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 Log.e("İzin verilmiş", "Koordinalatlar" + lastLocation.getLatitude() + "," + lastLocation.getLongitude());
                 mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(lastUserLocation, 17));*/
 
+
             } catch (Exception ex) {
                 Log.d("İzin zaten verilmiş", ex.toString());
             }
@@ -199,6 +171,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 }
             }
         }
+
     }
 
     @Override
@@ -245,20 +218,22 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE));
         mCurrentLocation = mMap.addMarker(markerOptions);
 
+
         //Kamera hareketi
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 17));
-        //mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
-        //mMap.animateCamera(CameraUpdateFactory.zoomTo(17));
-
-
-        //Toast.makeText(MapsActivity.this, "Your Current Location", Toast.LENGTH_LONG).show();
-
 
         //stop location updates
         if (mGoogleApiClient != null) {
             LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
             Log.d("onLocationChanged", "Locasyon Güncellendi");
         }
+        try {//Koordinatları aldıktan sonra işlem yaptırdık.
+            fill_select(selectedType);
+            selectedType = "none";
+        } catch (Exception ex) {
+            Log.d("deneme", ex.toString());
+        }
+
     }
 
     @Override
@@ -284,15 +259,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         Log.d("end_lat", "" + end_latitude);
         Log.d("end_lng", "" + end_longitude);
-    }
-
-    private String getDirectionsUrl() {//Şu anlık çalışmıyor. Gerek varmı sor ?
-        StringBuilder googleDirectionsUrl = new StringBuilder("https://maps.googleapis.com/maps/api/directions/json?");
-        googleDirectionsUrl.append("origin=" + latitude + "," + longitude);
-        googleDirectionsUrl.append("&destination=" + end_latitude + "," + end_longitude);
-        googleDirectionsUrl.append("&key=" + "AIzaSyADks2GNlxgv0Se-Cs6iqRK5WY_7hWs1nc");
-
-        return googleDirectionsUrl.toString();
     }
 
     private String getUrl(double latitude, double longitude, String nearbyPlace) {//Yakındaki yerleri çektiğimiz yer.
