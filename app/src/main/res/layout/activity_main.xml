@@ -1,116 +1,136 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_gravity="center"
+    android:background="#78909c"
     android:orientation="vertical"
-    tools:context="com.bektasoguzhan.gezbul.MainActivity">
+    tools:context="com.bektasoguzhan.gezbul.MainActivity"
+    tools:layout_editor_absoluteY="81dp">
 
-    <LinearLayout
-        android:layout_width="wrap_content"
+    <TextView
+        android:id="@+id/girisTextview"
+        android:layout_width="362dp"
+        android:layout_height="73dp"
+        android:layout_gravity="center"
+        android:layout_marginBottom="32dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginStart="16dp"
+        android:text="Lütfen Giriş Yapmak İçin Hesap Seçiniz"
+        android:textColor="#000000"
+        android:textSize="30dp"
+        android:visibility="visible"
+        app:layout_constraintBottom_toTopOf="@+id/signIn_button_facebook"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <Button
+        android:id="@+id/signIn_button"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_gravity="center"
+        android:layout_marginStart="60dp"
+        android:layout_marginTop="250dp"
+        android:background="@drawable/ic_google"
+        android:onClick="signIn"
+        android:visibility="visible"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="MissingConstraints" />
+
+    <Button
+        android:id="@+id/signIn_button_facebook"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_gravity="center"
+        android:layout_marginEnd="60dp"
+        android:background="@drawable/ic_facebook"
+        android:onClick="signInFacebook"
+        android:visibility="visible"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/signIn_button"
+        tools:ignore="MissingConstraints" />
+
+
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="0dp"
+        android:layout_height="80dp"
+        android:layout_marginEnd="32dp"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="50dp"
+        android:visibility="invisible"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/nameTextview"
+        app:srcCompat="@android:drawable/btn_star" />
+
+    <TextView
+        android:id="@+id/nameTextview"
+        android:layout_width="322dp"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:orientation="horizontal">
+        android:layout_marginEnd="16dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="64dp"
+        android:gravity="center"
+        android:text=""
+        android:textColor="#000000"
+        android:textSize="30dp"
+        android:visibility="invisible"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.28"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
-        <Button
-            android:id="@+id/signIn_button"
-            android:layout_width="180dp"
-            android:layout_height="80dp"
-            android:layout_gravity="center"
-            android:layout_marginTop="25dp"
-            android:background="@drawable/google"
-            android:onClick="signIn"
-            android:visibility="visible"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:ignore="MissingConstraints"
-            android:layout_marginRight="20dp"/>
-
-        <Button
-            android:id="@+id/signIn_button_facebook"
-            android:layout_width="180dp"
-            android:layout_height="80dp"
-            android:layout_gravity="center"
-            android:layout_marginTop="25dp"
-            android:background="@drawable/facebook"
-            android:onClick="signInFacebook"
-            android:visibility="visible"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:ignore="MissingConstraints" />
-    </LinearLayout>
-
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+    <Button
+        android:id="@+id/signOut_button"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
         android:layout_gravity="center"
-        android:layout_marginTop="32dp"
-        android:orientation="vertical"
-        app:layout_constraintTop_toTopOf="parent">
+        android:layout_marginEnd="32dp"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="50dp"
+        android:background="@drawable/out"
+        android:onClick="signOut"
+        android:text=""
+        android:textColor="#000000"
+        android:visibility="invisible"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/imageView" />
 
-        <ImageView
-            android:id="@+id/imageView"
-            android:layout_width="match_parent"
-            android:layout_height="70dp"
-            app:srcCompat="@android:drawable/btn_star" />
+    <TextView
+        android:id="@+id/durumTextview"
+        android:layout_width="362dp"
+        android:layout_height="80dp"
+        android:layout_gravity="center"
+        android:layout_marginBottom="24dp"
+        android:text="Şimdi Devam Edebilirsiniz ."
+        android:textColor="#000000"
+        android:textSize="30dp"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toTopOf="@+id/buttonDevam"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
-        <TextView
-            android:id="@+id/nameTextview"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginTop="20dp"
-            android:text=""
-            android:textSize="30dp" />
+    <Button
+        android:id="@+id/buttonDevam"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_gravity="center|bottom"
+        android:layout_marginBottom="16dp"
+        android:layout_marginEnd="32dp"
+        android:layout_marginStart="32dp"
+        android:background="@drawable/go"
+        android:onClick="gecis"
+        android:text=""
+        android:textColor="#000000"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:orientation="horizontal">
-
-            <Button
-                android:id="@+id/signOut_button"
-                android:layout_width="wrap_content"
-                android:layout_height="70dp"
-                android:layout_gravity="center"
-                android:layout_marginRight="20dp"
-                android:layout_marginTop="20dp"
-                android:onClick="signOut"
-                android:text="Google+ Çıkış Yap"
-                android:visibility="visible"
-                app:layout_constraintTop_toBottomOf="@+id/signIn_button"
-                tools:layout_editor_absoluteX="148dp" />
-
-            <Button
-                android:id="@+id/signOut_button_facebook"
-                android:layout_width="wrap_content"
-                android:layout_height="70dp"
-                android:layout_gravity="center"
-                android:layout_marginTop="20dp"
-                android:onClick="signOutFacebook"
-                android:text="Facebook Çıkış Yap"
-                android:visibility="visible" />
-        </LinearLayout>
-
-        <TextView
-            android:id="@+id/durumTextview"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginTop="20dp"
-            android:text="Giriş Yaptığınıza Göre Devam Edelim"
-            android:textSize="30dp" />
-
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="70dp"
-            android:layout_gravity="center|bottom"
-            android:onClick="gecis"
-            android:text="Devam Et" />
-
-    </LinearLayout>
-</LinearLayout>
+</android.support.constraint.ConstraintLayout>
