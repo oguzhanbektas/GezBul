@@ -40,7 +40,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
     private GoogleApiClient mGoogleApiClient;
     //Buradan sonrası gerekli tanımlamalar
     private TextView mTextViewAd, mDurumTextView, mGirisTextview;
-    private Button mSignInButtonGoogle, mSignOutButton, mSignInButtonFacebook, mDevamButton;
+    private Button mSignInButtonGoogle, mSignOutButton, mSignInButtonFacebook, mDevamButton, mAnonimButton;
     private String KullaniciID = "null";
     private ImageView mImageView;
     String info = "";
@@ -117,6 +117,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         mDevamButton = (Button) findViewById(R.id.buttonDevam);
         mDurumTextView = (TextView) findViewById(R.id.durumTextview);
         mGirisTextview = (TextView) findViewById(R.id.girisTextview);
+        mAnonimButton = (Button) findViewById(R.id.anonim_button);
         hide();
     }
 
@@ -130,6 +131,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         mSignInButtonFacebook.setVisibility(View.VISIBLE);
         mSignInButtonGoogle.setVisibility(View.VISIBLE);
         mGirisTextview.setVisibility(View.VISIBLE);
+        mAnonimButton.setVisibility(View.VISIBLE);
     }
 
     private void show() {
@@ -140,6 +142,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         mDevamButton.setVisibility(View.VISIBLE);
         mSignInButtonFacebook.setVisibility(View.INVISIBLE);
         mSignInButtonGoogle.setVisibility(View.INVISIBLE);
+        mAnonimButton.setVisibility(View.INVISIBLE);
         mGirisTextview.setVisibility(View.INVISIBLE);
     }
 
@@ -147,6 +150,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         try {//KullaniciID yolla.
             Intent i = new Intent(MainActivity.this, SelectionActivity.class);
             i.putExtra("kullaniciID", KullaniciID);
+            i.putExtra("info", info);
             startActivity(i);
             Log.e("Geçiş", "SelectionActivity aktivity e geçildi.");
         } catch (Exception ex) {
@@ -158,7 +162,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
     public void signInFacebook(View view) {//Facebook ile giriş
         try {
             info = "facebook";
-            show();//Şimdilik startAcrivityForResult yapıldıktan sonra silinecek
+            show();
 
         } catch (Exception ex) {
             Log.e("Facebook ile Giriş", ex.toString());
@@ -197,6 +201,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         } else {
             Log.e("Out", "Doğru değer alınamıyor");
         }
+        mAnonimButton.setVisibility(View.VISIBLE);
     }
 
     @Override
@@ -224,6 +229,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
                                     }
                                 });
                         show();
+                        mAnonimButton.setVisibility(View.INVISIBLE);
                     } else {
                         Log.e("Google Login", "Google hesabıyla oturum açma isteği yapılamadı.");
                     }
@@ -233,6 +239,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
             }
         } else if (info == "facebook") {
             show();
+            mAnonimButton.setVisibility(View.INVISIBLE);
         }
     }
 
@@ -261,6 +268,19 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
             }
         } catch (Exception ex) {
             Log.e("onStop", ex.toString());
+        }
+    }
+
+    public void anonim(View view) {
+        try {
+            info = "anonim";
+            Intent i = new Intent(MainActivity.this, SelectionActivity.class);
+            i.putExtra("kullaniciID", KullaniciID);
+            i.putExtra("info", info);
+            startActivity(i);
+            Log.e("Geçiş", "SelectionActivity aktivity e geçildi.");
+        } catch (Exception ex) {
+            Log.e("Geçiş HATA !", "HATA-->" + ex.toString());
         }
     }
 }

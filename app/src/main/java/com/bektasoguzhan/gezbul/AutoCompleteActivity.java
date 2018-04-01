@@ -18,14 +18,10 @@ public class AutoCompleteActivity extends AppCompatActivity {
     private static String LOG_TAG = "AutoCompleteActivity";
 //DENEME İÇİN YAPILDI İŞLEVİ YOK ARTIK. MAPS AKTİVİTY E AKTARILDI....
 
-    private TextView txtSelectedPlaceName;
-
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_autocomplete);
-
-        txtSelectedPlaceName = (TextView) this.findViewById(R.id.txtSelectedPlaceName);
 
         PlaceAutocompleteFragment autocompleteFragment = (PlaceAutocompleteFragment)
                 getFragmentManager().findFragmentById(R.id.fragment_autocomplete);
@@ -34,7 +30,6 @@ public class AutoCompleteActivity extends AppCompatActivity {
             @Override
             public void onPlaceSelected(Place place) {
                 Log.i(LOG_TAG, "Place: " + place.getName());
-                txtSelectedPlaceName.setText(String.format("Selected places : %s  - %s" , place.getName(), place.getAddress()));
             }
 
             @Override

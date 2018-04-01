@@ -10,7 +10,7 @@ import android.widget.Toast;
 public class SelectionActivity extends AppCompatActivity implements View.OnClickListener {
 
     Button mNone, mCafe, mSchool, mShopping, mHospital;
-    String kullaciID = null, selectedType = "None";
+    String kullaciID = null, selectedType = "None", info = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -19,8 +19,8 @@ public class SelectionActivity extends AppCompatActivity implements View.OnClick
         start();
         Intent i = getIntent();
         kullaciID = i.getStringExtra("kullaniciID");//G+ veya Facebookla giren kullanıcıların ID sini çekmek için.
-        Toast.makeText(this, kullaciID, Toast.LENGTH_SHORT).show();
-
+        info = i.getStringExtra("info");
+        Toast.makeText(this, "Kullanıcı id " + kullaciID + " İnfo " + info, Toast.LENGTH_SHORT).show(); //veriler doğru çekiliyor
     }
 
     private void start() {
@@ -35,6 +35,7 @@ public class SelectionActivity extends AppCompatActivity implements View.OnClick
         Intent intent = new Intent(SelectionActivity.this, MapsActivity.class);
         intent.putExtra("kullaniciID", kullaciID);
         intent.putExtra("selectedType", selectedType);
+        intent.putExtra("info", info);
         startActivity(intent);
     }
 
@@ -68,7 +69,6 @@ public class SelectionActivity extends AppCompatActivity implements View.OnClick
                 transition(selectedType);
                 break;
             }
-
         }
     }
 }
