@@ -57,7 +57,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     Button mKaydetButton;
     LatLng mLatLng;
     private int PROXIMITY_RADIUS = 10000, PLACE_PICKER_REQUEST = 1;
-    ;//Sen çapın
     private double position_latitude = 1, position_longitude = 1, latitude, longitude, end_latitude, end_longitude;//Konum değişkenleri
 
 
@@ -137,6 +136,17 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             } catch (Exception ex) {
                 Log.d("İzin zaten verilmiş", ex.toString());
             }
+        }
+        if (info.equals("SaveActivity")) {//İstenilen yeri kaydettikden sonra geri döndüğünde aynı yerden devam etsin diye.
+            double y_lat, y_lon;
+            String title;
+            Intent i = getIntent();
+            title = i.getStringExtra("title");
+            y_lat = i.getDoubleExtra("lat", 1);
+            y_lon = i.getDoubleExtra("lon", 1);
+            LatLng latLng = new LatLng(y_lat, y_lon);
+            mMap.addMarker(new MarkerOptions().position(latLng).title(title).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)));
+            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 17));
         }
 
         mMap.setMyLocationEnabled(true);
@@ -319,6 +329,15 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     public void Kaydet(View view) {
         Toast.makeText(this, title + " : " + mLatLng + "ayrı ayrı " + position_latitude + "-" + position_longitude, Toast.LENGTH_SHORT).show();
+        Intent i = new Intent(this, SaveActivity.class);
+        i.putExtra("kullaniciID", KullaciID);
+        i.putExtra("title", title);
+        i.putExtra("lat", position_latitude);
+        i.putExtra("lon", position_longitude);
+        i.putExtra("info", info);
+        i.putExtra("selectedType", selectedType);
+        startActivity(i);
+
     }
 
 }

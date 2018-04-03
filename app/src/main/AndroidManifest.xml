@@ -55,7 +55,8 @@
             android:name=".AutoCompleteActivity"
             android:label="@string/title_activity_maps"
             tools:ignore="WrongManifestParent" />
-        <activity android:name=".SelectionActivity"></activity>
+        <activity android:name=".SelectionActivity" />
+        <activity android:name=".SaveActivity"></activity>
     </application>
 
 </manifest>
