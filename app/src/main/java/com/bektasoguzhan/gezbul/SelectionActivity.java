@@ -3,14 +3,23 @@ package com.bektasoguzhan.gezbul;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 public class SelectionActivity extends AppCompatActivity implements View.OnClickListener {
 
     Button mNone, mCafe, mSchool, mShopping, mHospital;
-    String kullaciID = null, selectedType = "None", info = null;
+    int sayac = 0;
+    String kullaciID = null, selectedType = "none", info = null;
+    private String[] forSpinnerString = {"ATM", "Muhasebe", "Hava Alanı", "Luna Park", "Akvaryum", "Sanat Galarisi", "Fırın", "Güzellik Salonu", "Kitapçı", "Bowling", "Otobüs Durağı", "Kamp Alanı", "Araba Kiralama", "Araba Tamircisi", "Mezarlık", "Kilise", "Belediye Binası", "Market", "Adliye", "Kütüphane", "Pansiyon", "Camii", "Park", "Otopark", "Eczane", "Restaurant", "Karavan Park Alanı", "Stadyum", "Metro İstasyonu", "Super Market", "Sinagog", "Taxi Durağı", "Tren İstasyonu", "Hayvanat Bahçesi"};
+    private String[] xForSpinnerString = {"atm", "accounting", "airport", "amusement_park", "aquarium", "art_gallery", "bakery", "beauty_salon", "book_store", "bowling_alley", "bus_station", "campground", "car_rental", "car_repair", "cemetery", "church", "city_hall", "convenience_store", "courthouse", "library", "lodging", "mosque", "park", "parking", "pharmacy", "restaurant", "rv_park", "stadium", "subway_station", "supermarket", "synagogue", "taxi_stand", "train_station", "zoo"};
+    private ArrayAdapter<String> dataAdapterForSpinner;
+    Spinner mSpinner;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -21,6 +30,13 @@ public class SelectionActivity extends AppCompatActivity implements View.OnClick
         kullaciID = i.getStringExtra("kullaniciID");//G+ veya Facebookla giren kullanıcıların ID sini çekmek için.
         info = i.getStringExtra("info");
         Toast.makeText(this, "Kullanıcı id " + kullaciID + " İnfo " + info, Toast.LENGTH_SHORT).show(); //veriler doğru çekiliyor
+        mSpinner = (Spinner) findViewById(R.id.spinner);
+        //Spinner için adapterleri hazırlıyoruz.
+        dataAdapterForSpinner = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, forSpinnerString);
+        //Listelenecek verilerin görünümünü belirliyoruz.
+        dataAdapterForSpinner.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        //Hazırladğımız Adapter'leri Spinner'lara ekliyoruz.
+        mSpinner.setAdapter(dataAdapterForSpinner);
     }
 
     private void start() {
@@ -39,6 +55,15 @@ public class SelectionActivity extends AppCompatActivity implements View.OnClick
         startActivity(intent);
     }
 
+    private void Belirle() {
+        for (int i = 0; i < forSpinnerString.length; i++) {
+            if (forSpinnerString[i].equals(mSpinner.getSelectedItem().toString())) {
+                sayac = i;
+                Log.d("Sayac=>", String.valueOf(sayac));
+            }
+        }
+
+    }
 
     @Override
     public void onClick(View v) {
@@ -48,7 +73,6 @@ public class SelectionActivity extends AppCompatActivity implements View.OnClick
                 transition(selectedType);
                 break;
             }
-
             case R.id.btnCafe: {
                 selectedType = "cafe";
                 transition(selectedType);
@@ -67,6 +91,46 @@ public class SelectionActivity extends AppCompatActivity implements View.OnClick
             case R.id.btnShopping: {
                 selectedType = "shopping_mall";
                 transition(selectedType);
+                break;
+            }
+            case R.id.btnBank: {
+                selectedType = "bank";
+                transition(selectedType);
+                break;
+            }
+            case R.id.btnBar: {
+                selectedType = "bar";
+                transition(selectedType);
+                break;
+            }
+            case R.id.btnGasStation: {
+                selectedType = "gas_station";
+                transition(selectedType);
+                break;
+            }
+            case R.id.btnHairCare: {
+                selectedType = "hair_care";
+                transition(selectedType);
+                break;
+            }
+            case R.id.btnGYM: {
+                selectedType = "gym";
+                transition(selectedType);
+                break;
+            }
+            case R.id.btnMuseum: {
+                selectedType = "museum";
+                transition(selectedType);
+                break;
+            }
+            case R.id.btnGo: {
+                Belirle();
+                selectedType = xForSpinnerString[sayac];
+                transition(selectedType);
+                break;
+            }
+            case R.id.btnListele: {
+
                 break;
             }
         }

@@ -56,7 +56,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     Marker mCurrentLocation;
     Button mKaydetButton;
     LatLng mLatLng;
-    private int PROXIMITY_RADIUS = 10000, PLACE_PICKER_REQUEST = 1;
+    private int PROXIMITY_RADIUS = 100000, PLACE_PICKER_REQUEST = 1;
     private double position_latitude = 1, position_longitude = 1, latitude, longitude, end_latitude, end_longitude;//Konum değişkenleri
 
 
@@ -70,6 +70,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mapFragment.getMapAsync(this);
         start();
         autoComplete();
+
     }
 
     private void start() {//Tanımlamalar
@@ -91,7 +92,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             GetNearbyPlacesData getNearbyPlacesData = new GetNearbyPlacesData();
             Toast.makeText(MapsActivity.this, select, Toast.LENGTH_SHORT).show();
             String url = getUrl(latitude, longitude, select);
-
+            //mMap.addMarker(new MarkerOptions().position((new LatLng(40.593584899999996, 26.902812500000003))));
+            //String url = getUrl(40.593584899999996, 26.902812500000003, select);
             dataTransfer[0] = mMap;
             dataTransfer[1] = url;
 
@@ -152,7 +154,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMap.setMyLocationEnabled(true);
         mMap.setOnMarkerDragListener(this);
         mMap.setOnMarkerClickListener(this);
-
+        //  fill_select("campground");
     }
 
     protected synchronized void buildGoogleApiClient() {
@@ -296,9 +298,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     private String getUrl(double latitude, double longitude, String nearbyPlace) {//Yakındaki yerleri çektiğimiz yer.
         Log.i("gelen tür", nearbyPlace);
-        if (nearbyPlace == "none") {
+        if (nearbyPlace.equals("none")) {
             return "none";
-        } else if (nearbyPlace != "none") {
+        } else if (!nearbyPlace.equals("none")) {
             StringBuilder googlePlacesUrl = new StringBuilder("https://maps.googleapis.com/maps/api/place/nearbysearch/json?");
             googlePlacesUrl.append("location=" + latitude + "," + longitude);
             googlePlacesUrl.append("&radius=" + PROXIMITY_RADIUS);

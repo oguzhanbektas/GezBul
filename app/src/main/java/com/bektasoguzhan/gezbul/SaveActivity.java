@@ -23,7 +23,7 @@ public class SaveActivity extends AppCompatActivity {
     private TextView mEditTextComment, mTextTitleName;
     private ArrayAdapter<String> dataAdapterForSpinner;
     private String[] forSpinnerString = {"0", "1", "2", "3", "4", "5"};
-    private String kullaniciID, title, info = "", selectedType = "None";
+    private String kullaniciID, title, info = "", selectedType = "none";
     double lat, lon;
     FirebaseDatabase db = FirebaseDatabase.getInstance();
     DatabaseReference dbRef = db.getReference();
