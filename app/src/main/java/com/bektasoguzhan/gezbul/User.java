@@ -5,7 +5,7 @@ package com.bektasoguzhan.gezbul;
  */
 
 public class User {
-    private String kullaniciID, title, comment, numberOfReviews;
+    private String kullaniciID, title, comment, numberOfReviews, key;
     private double lat, lon;
 
     public User(String kullaniciID, String title, String comment, String numberOfReviews, double lat, double lon) {
@@ -25,12 +25,34 @@ public class User {
         this.lon = lon;
     }
 
+    public User(String title, String comment, String numberOfReviews, double lat, double lon, String key) {
+        this.title = title;
+        this.comment = comment;
+        this.numberOfReviews = numberOfReviews;
+        this.lat = lat;
+        this.lon = lon;
+        this.key = key;
+    }
+
+
+    public String getKey() {
+        return key;
+    }
+
+    public void setKey(String key) {
+        this.key = key;
+    }
+
+    public User() {
+
+    }
+
     public String getkullaniciID() {
         return kullaniciID;
     }
 
     public void setkullaniciID(String kullaniciID) {
-        kullaniciID = kullaniciID;
+        this.kullaniciID = kullaniciID;
     }
 
     public String getTitle() {

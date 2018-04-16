@@ -56,7 +56,8 @@
             android:label="@string/title_activity_maps"
             tools:ignore="WrongManifestParent" />
         <activity android:name=".SelectionActivity" />
-        <activity android:name=".SaveActivity"></activity>
+        <activity android:name=".SaveActivity" />
+        <activity android:name=".ListsActivity"></activity>
     </application>
 
 </manifest>

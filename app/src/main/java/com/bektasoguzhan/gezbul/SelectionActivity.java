@@ -130,7 +130,9 @@ public class SelectionActivity extends AppCompatActivity implements View.OnClick
                 break;
             }
             case R.id.btnListele: {
-
+                Intent z = new Intent(SelectionActivity.this, ListsActivity.class);
+                z.putExtra("kullaniciID", kullaciID);
+                startActivity(z);
                 break;
             }
         }
