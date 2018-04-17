@@ -19,11 +19,12 @@ import com.google.firebase.database.FirebaseDatabase;
 
 public class SaveActivity extends AppCompatActivity {
 
+    private Button mSaveButton, mUpdateButton, mDeleteButton;
     private Spinner mSpinner;
     private TextView mEditTextComment, mTextTitleName;
     private ArrayAdapter<String> dataAdapterForSpinner;
     private String[] forSpinnerString = {"0", "1", "2", "3", "4", "5"};
-    private String kullaniciID, title, info = "", selectedType = "none";
+    private String kullaniciID, title, info = "", selectedType = "none", comment = "", key = "", numberOfReviews = "";
     double lat, lon;
     FirebaseDatabase db = FirebaseDatabase.getInstance();
     DatabaseReference dbRef = db.getReference();
@@ -43,24 +44,39 @@ public class SaveActivity extends AppCompatActivity {
     }
 
     public void start() {
+        //Tanımlamalar
         mEditTextComment = (TextView) findViewById(R.id.editTextComment);
         mTextTitleName = (TextView) findViewById(R.id.textTitleName);
         mSpinner = (Spinner) findViewById(R.id.spinner);
+        mSaveButton = (Button) findViewById(R.id.buttonSave);
+        mUpdateButton = (Button) findViewById(R.id.buttonUpdate);
+        mDeleteButton = (Button) findViewById(R.id.buttonDelete);
 
         //Verilerimizin çekildiği yer
 
         Intent i = getIntent();
+        info = i.getStringExtra("info");
+        if (info.equals("Update-Save")) {
+            mSaveButton.setVisibility(View.INVISIBLE);
+            comment = i.getStringExtra("comment");
+            key = i.getStringExtra("key");
+            mEditTextComment.setText(comment);
+            numberOfReviews = i.getStringExtra("numberOfReviews");
+        } else {
+            mDeleteButton.setVisibility(View.INVISIBLE);
+            mUpdateButton.setVisibility(View.INVISIBLE);
+            selectedType = i.getStringExtra("selectedType");
+        }
         kullaniciID = i.getStringExtra("kullaniciID");//G+ veya Facebookla giren kullanıcıların ID sini çekmek için.
         title = i.getStringExtra("title");
         lat = i.getDoubleExtra("lat", 0);
         lon = i.getDoubleExtra("lon", 0);
-        info = i.getStringExtra("info");
-        selectedType = i.getStringExtra("selectedType");
-        Toast.makeText(this, "K I -> " + kullaniciID + "Title-> " + title + "lat-lon ->" + lat + "-" + lon, Toast.LENGTH_LONG).show();
+       // Toast.makeText(this, "K I -> " + kullaniciID + "Title-> " + title + "lat-lon ->" + lat + "-" + lon, Toast.LENGTH_LONG).show();
         mTextTitleName.setText(title);
     }
 
-    public void update(View view) {
+
+    public void update(View view) {//Update İşlemleri
         if (mEditTextComment == null) {
             Toast.makeText(this, "Yorum Kısmı Boş Bırakılamaz", Toast.LENGTH_LONG).show();
         } else {
@@ -70,7 +86,7 @@ public class SaveActivity extends AppCompatActivity {
 
     }
 
-    public void delete(View view) {
+    public void delete(View view) {//Delete İşlemleri
         if (mEditTextComment == null) {
             Toast.makeText(this, "Yorum Kısmı Boş Bırakılamaz", Toast.LENGTH_LONG).show();
         } else {
@@ -80,7 +96,7 @@ public class SaveActivity extends AppCompatActivity {
 
     }
 
-    public void save(View view) {
+    public void save(View view) {//Save tuşuna basıldığı zaman yapılacak işlemler
         if (mEditTextComment.getText().toString() == "") {
             Toast.makeText(this, "Yorum Kısmı Boş Bırakılamaz", Toast.LENGTH_LONG).show();
         } else {//String kullaniciID, String title, String comment, string numberOfReviews, double lat, double lon
@@ -111,7 +127,7 @@ public class SaveActivity extends AppCompatActivity {
         }
     }
 
-    private void returnMapsActivity() {
+    private void returnMapsActivity() {//Saveden Haritaya geri dönmek için gerekli bilgiler
         Intent intent = new Intent(SaveActivity.this, MapsActivity.class);
         intent.putExtra("kullaniciID", kullaniciID);
         intent.putExtra("selectedType", selectedType);

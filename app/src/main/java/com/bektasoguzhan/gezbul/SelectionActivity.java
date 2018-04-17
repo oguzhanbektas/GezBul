@@ -13,7 +13,7 @@ import android.widget.Toast;
 
 public class SelectionActivity extends AppCompatActivity implements View.OnClickListener {
 
-    Button mNone, mCafe, mSchool, mShopping, mHospital;
+    Button mNone, mCafe, mSchool, mShopping, mHospital, mbtnListele;
     int sayac = 0;
     String kullaciID = null, selectedType = "none", info = null;
     private String[] forSpinnerString = {"ATM", "Muhasebe", "Hava Alanı", "Luna Park", "Akvaryum", "Sanat Galarisi", "Fırın", "Güzellik Salonu", "Kitapçı", "Bowling", "Otobüs Durağı", "Kamp Alanı", "Araba Kiralama", "Araba Tamircisi", "Mezarlık", "Kilise", "Belediye Binası", "Market", "Adliye", "Kütüphane", "Pansiyon", "Camii", "Park", "Otopark", "Eczane", "Restaurant", "Karavan Park Alanı", "Stadyum", "Metro İstasyonu", "Super Market", "Sinagog", "Taxi Durağı", "Tren İstasyonu", "Hayvanat Bahçesi"};
@@ -29,7 +29,7 @@ public class SelectionActivity extends AppCompatActivity implements View.OnClick
         Intent i = getIntent();
         kullaciID = i.getStringExtra("kullaniciID");//G+ veya Facebookla giren kullanıcıların ID sini çekmek için.
         info = i.getStringExtra("info");
-        Toast.makeText(this, "Kullanıcı id " + kullaciID + " İnfo " + info, Toast.LENGTH_SHORT).show(); //veriler doğru çekiliyor
+        // Toast.makeText(this, "Kullanıcı id " + kullaciID + " İnfo " + info, Toast.LENGTH_SHORT).show(); //veriler doğru çekiliyor
         mSpinner = (Spinner) findViewById(R.id.spinner);
         //Spinner için adapterleri hazırlıyoruz.
         dataAdapterForSpinner = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, forSpinnerString);
@@ -37,17 +37,23 @@ public class SelectionActivity extends AppCompatActivity implements View.OnClick
         dataAdapterForSpinner.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         //Hazırladğımız Adapter'leri Spinner'lara ekliyoruz.
         mSpinner.setAdapter(dataAdapterForSpinner);
+        if (info.equals("anonim")) {
+            mbtnListele.setVisibility(View.INVISIBLE);
+        } else {
+            mbtnListele.setVisibility(View.VISIBLE);
+        }
     }
 
-    private void start() {
+    private void start() {//İhtiyaç olur diye butonların tanımı yapıldı. Btn Listele için faydası oldu
         mNone = (Button) findViewById(R.id.btnNone);
         mCafe = (Button) findViewById(R.id.btnCafe);
         mSchool = (Button) findViewById(R.id.btnSchool);
         mShopping = (Button) findViewById(R.id.btnShopping);
         mHospital = (Button) findViewById(R.id.btnHospital);
+        mbtnListele = (Button) findViewById(R.id.btnListele);
     }
 
-    private void transition(String selectedType) {
+    private void transition(String selectedType) {//Diğer forma geçiş için bütün butonlar için ayrı ayrı yapmak yerine bu yapı kuruldu
         Intent intent = new Intent(SelectionActivity.this, MapsActivity.class);
         intent.putExtra("kullaniciID", kullaciID);
         intent.putExtra("selectedType", selectedType);
@@ -55,18 +61,17 @@ public class SelectionActivity extends AppCompatActivity implements View.OnClick
         startActivity(intent);
     }
 
-    private void Belirle() {
+    private void Belirle() {//Diğer yerlerde seçilen ifadenin kaçıncı sırada olduğunu öğrenmek için
         for (int i = 0; i < forSpinnerString.length; i++) {
             if (forSpinnerString[i].equals(mSpinner.getSelectedItem().toString())) {
                 sayac = i;
-                Log.d("Sayac=>", String.valueOf(sayac));
+                //    Log.d("Sayac=>", String.valueOf(sayac));
             }
         }
-
     }
 
     @Override
-    public void onClick(View v) {
+    public void onClick(View v) {//Click işlemleri yapıldı
         switch (v.getId()) {
             case R.id.btnNone: {
                 selectedType = "none";

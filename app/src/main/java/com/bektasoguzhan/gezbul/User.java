@@ -8,6 +8,8 @@ public class User {
     private String kullaniciID, title, comment, numberOfReviews, key;
     private double lat, lon;
 
+    //4 tane yapıcı fon override edildi .String kullanıcı id yle başlayan şuan kullanılmıyor
+    //Geri kalan 2 tane yapıcı metod biri kaydederken diğeri veriyi okurken işe yarıyor. En sondaki boş yapıcı yapmazsak hata veriyor değer istiyor direk yani.
     public User(String kullaniciID, String title, String comment, String numberOfReviews, double lat, double lon) {
         this.kullaniciID = kullaniciID;
         this.title = title;
@@ -34,6 +36,9 @@ public class User {
         this.key = key;
     }
 
+    public User() {
+
+    }
 
     public String getKey() {
         return key;
@@ -41,10 +46,6 @@ public class User {
 
     public void setKey(String key) {
         this.key = key;
-    }
-
-    public User() {
-
     }
 
     public String getkullaniciID() {

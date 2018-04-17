@@ -49,7 +49,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private GoogleMap mMap;
     LocationManager mLocationManager;
     LocationListener mLocationListener;
-    private String KullaciID = "null", selectedType = "none", title = null, info = null;
+    private String kullaniciID = "null", selectedType = "none", title = null, info = null;
     GoogleApiClient mGoogleApiClient;
     LocationRequest mLocationRequest;
     Location mLastLocation;
@@ -64,7 +64,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
-        // Obtain the SupportMapFragment and get notified when the map is ready to be used.
+        // Fragment yapı için
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
@@ -75,7 +75,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     private void start() {//Tanımlamalar
         Intent i = getIntent();
-        KullaciID = i.getStringExtra("kullaniciID");//G+ veya Facebookla giren kullanıcıların ID sini çekmek için.
+        kullaniciID = i.getStringExtra("kullaniciID");//G+ veya Facebookla giren kullanıcıların ID sini çekmek için.
         selectedType = i.getStringExtra("selectedType");
         info = i.getStringExtra("info");
         Toast.makeText(this, "info -> " + info, Toast.LENGTH_SHORT).show();
@@ -83,7 +83,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     }
 
-    public void fill_select(String select) {
+    public void fill_select(String select) {//Bir tür geldiği zaman haritayı doldurmak için
         mMap.clear();
         if (select == "none") {
             mMap.clear();
@@ -124,7 +124,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     @Override
-    public void onMapReady(GoogleMap googleMap) {
+    public void onMapReady(GoogleMap googleMap) {//Harita hazır olduğunda işlem yapacak
         mMap = googleMap;
         mMap.setOnMapLongClickListener(this);//Haritaya uzun basıldığında işlem yapabilmek için
         //Kullanıcı iznini alma
@@ -133,8 +133,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         } else {//Eğer izin daha önceden alındıysa
             try {
                 buildGoogleApiClient();
-
-
             } catch (Exception ex) {
                 Log.d("İzin zaten verilmiş", ex.toString());
             }
@@ -150,11 +148,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             mMap.addMarker(new MarkerOptions().position(latLng).title(title).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)));
             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 17));
         }
-
         mMap.setMyLocationEnabled(true);
         mMap.setOnMarkerDragListener(this);
         mMap.setOnMarkerClickListener(this);
-        //  fill_select("campground");
     }
 
     protected synchronized void buildGoogleApiClient() {
@@ -186,7 +182,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     }
 
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {//Haritaya uzun tıklandığı zaman açılan pencere doğru sonucu göndürdü mü diye
         if (requestCode == PLACE_PICKER_REQUEST) {
             if (resultCode == RESULT_OK) {
                 Place place = PlacePicker.getPlace(data, this);
@@ -216,7 +212,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     @Override
-    public void onLocationChanged(Location location) {
+    public void onLocationChanged(Location location) {//Kullanıcının Locasyonu değişince yapılacaklar
         Log.d("onLocationChanged", "entered");
 
         mLastLocation = location;
@@ -227,15 +223,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         latitude = location.getLatitude();
         longitude = location.getLongitude();
 
-
         LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
+       /*
         MarkerOptions markerOptions = new MarkerOptions();
         markerOptions.position(latLng);
         markerOptions.draggable(true);
-        markerOptions.title("Buradasın");
+        //markerOptions.title("Buradasın");
         markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE));
-        mCurrentLocation = mMap.addMarker(markerOptions);
-
+        mCurrentLocation = mMap.addMarker(markerOptions);*/
 
         //Kamera hareketi
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 17));
@@ -258,10 +253,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     @Override
-    public boolean onMarkerClick(Marker marker) {
+    public boolean onMarkerClick(Marker marker) {//Marker işlemleri
         marker.setDraggable(true);
-        Log.d("Marker ' a Tıklandı ", "id->" + marker.getId() + "\n title->" + marker.getTitle() + "\n position" + marker.getPosition()
-                + "\n snippet->" + marker.getSnippet());
+        //   Log.d("Marker ' a Tıklandı ", "id->" + marker.getId() + "\n title->" + marker.getTitle() + "\n position" + marker.getPosition()
+        //         + "\n snippet->" + marker.getSnippet());
         title = marker.getTitle();
         position_latitude = marker.getPosition().latitude;
         position_longitude = marker.getPosition().longitude;
@@ -330,9 +325,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     public void Kaydet(View view) {
-        Toast.makeText(this, title + " : " + mLatLng + "ayrı ayrı " + position_latitude + "-" + position_longitude, Toast.LENGTH_SHORT).show();
+        //    Toast.makeText(this, title + " : " + mLatLng + "ayrı ayrı " + position_latitude + "-" + position_longitude, Toast.LENGTH_SHORT).show();
         Intent i = new Intent(this, SaveActivity.class);
-        i.putExtra("kullaniciID", KullaciID);
+        i.putExtra("kullaniciID", kullaniciID);
         i.putExtra("title", title);
         i.putExtra("lat", position_latitude);
         i.putExtra("lon", position_longitude);
