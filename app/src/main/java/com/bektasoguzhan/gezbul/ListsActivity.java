@@ -90,7 +90,7 @@ public class ListsActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 try {
-                    Toast.makeText(getApplicationContext(), String.valueOf(position), Toast.LENGTH_SHORT).show();
+                    //    Toast.makeText(getApplicationContext(), String.valueOf(position), Toast.LENGTH_SHORT).show();
                     Intent intent = new Intent(ListsActivity.this, SaveActivity.class);
                     intent.putExtra("kullaniciID", kullaniciID);
                     intent.putExtra("info", "Update-Save");

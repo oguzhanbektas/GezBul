@@ -62,6 +62,8 @@ public class SaveActivity extends AppCompatActivity {
             key = i.getStringExtra("key");
             mEditTextComment.setText(comment);
             numberOfReviews = i.getStringExtra("numberOfReviews");
+            Log.d("DEĞER------->", numberOfReviews);
+            //  mSpinner.setTop(Integer.valueOf(numberOfReviews));
         } else {
             mDeleteButton.setVisibility(View.INVISIBLE);
             mUpdateButton.setVisibility(View.INVISIBLE);
@@ -71,7 +73,7 @@ public class SaveActivity extends AppCompatActivity {
         title = i.getStringExtra("title");
         lat = i.getDoubleExtra("lat", 0);
         lon = i.getDoubleExtra("lon", 0);
-       // Toast.makeText(this, "K I -> " + kullaniciID + "Title-> " + title + "lat-lon ->" + lat + "-" + lon, Toast.LENGTH_LONG).show();
+        // Toast.makeText(this, "K I -> " + kullaniciID + "Title-> " + title + "lat-lon ->" + lat + "-" + lon, Toast.LENGTH_LONG).show();
         mTextTitleName.setText(title);
     }
 
@@ -90,10 +92,30 @@ public class SaveActivity extends AppCompatActivity {
         if (mEditTextComment == null) {
             Toast.makeText(this, "Yorum Kısmı Boş Bırakılamaz", Toast.LENGTH_LONG).show();
         } else {
+            AlertDialog.Builder builder = new AlertDialog.Builder(SaveActivity.this);
+            builder.setTitle("GEZBUL");
+            builder.setMessage("Bu yeri silmek istediğinize eminmisiniz ? ");
+            builder.setNegativeButton("HAYIR", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int id) {
+                    //HAYIR butonuna basılınca yapılacaklar.Sadece kapanması isteniyorsa boş bırakılacak
+                }
+            });
+            builder.setPositiveButton("EVET", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int id) {
+                    //EVET butonuna basılınca yapılacaklar
+                    try {
+                        DatabaseReference delete = FirebaseDatabase.getInstance().getReference().child("users").child(kullaniciID).child(key);
+                        delete.removeValue();
+                        returnListActivity();
+                    } catch (Exception ex) {
+                        Log.d("Delete", "Veriyi silerken sorun oluştu." + ex.toString());
+                    }
+                }
+            });
+            builder.show();
 
         }
         Toast.makeText(this, "Delete Tuşuna basıldı", Toast.LENGTH_LONG).show();
-
     }
 
     public void save(View view) {//Save tuşuna basıldığı zaman yapılacak işlemler
@@ -117,7 +139,6 @@ public class SaveActivity extends AppCompatActivity {
                         dbRef.child("users").child(kullaniciID + "/" + key).setValue(kullanici);
                         Log.d("Save", "veri başarı ile kaydedildi.");
                         returnMapsActivity();
-                        SaveActivity.this.finishAffinity();
                     } catch (Exception ex) {
                         Log.d("SAVE", "Veriyi kaydederken sorun oluştu." + ex.toString());
                     }
@@ -138,4 +159,11 @@ public class SaveActivity extends AppCompatActivity {
         intent.putExtra("info", info);
         startActivity(intent);
     }
+
+    private void returnListActivity() {
+        Intent intent = new Intent(SaveActivity.this, ListsActivity.class);
+        intent.putExtra("kullaniciID",kullaniciID);
+        startActivity(intent);
+    }
 }
+
