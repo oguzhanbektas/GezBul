@@ -1,0 +1,2 @@
+baþka pc de açýldýðýnda g+ ile giriþ yapmaya bilir. Bunun sebebi SHA 1 farklý oluyor. SHA 1 i öðrenmek için Grandle > Task > android > signingReport u çalýþtýrýn.
+O Console da  göstericek SHA 1 deðerinizi bunu console.firebase de ilgili projenize eklemeniz gerekmektedir.

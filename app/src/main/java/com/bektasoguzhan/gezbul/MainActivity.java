@@ -207,8 +207,9 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {//Google için bağlantı
         super.onActivityResult(requestCode, resultCode, data);
-        if (info == "google") {
+        if (info.equals("google")) {
             try {
+                Log.d("s", String.valueOf(requestCode));
                 if (requestCode == requestCode_SIGN_IN) {
                     GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
                     if (result.isSuccess()) {
@@ -231,7 +232,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
                         show();
                         mAnonimButton.setVisibility(View.INVISIBLE);
                     } else {
-                        Log.e("Google Login", "Google hesabıyla oturum açma isteği yapılamadı.");
+                        Log.e("Google Login", "Google hesabıyla oturum açma isteği yapılamadı." + result.getStatus());
                     }
                 }
             } catch (Exception ex) {
