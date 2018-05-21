@@ -14,6 +14,14 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.facebook.AccessToken;
+import com.facebook.CallbackManager;
+import com.facebook.FacebookCallback;
+import com.facebook.FacebookException;
+import com.facebook.internal.FacebookSignatureValidator;
+import com.facebook.login.LoginManager;
+import com.facebook.login.LoginResult;
+import com.facebook.login.widget.LoginButton;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
@@ -26,12 +34,14 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
 
 import java.io.InputStream;
 import java.net.URL;
+import java.util.Arrays;
 
 public class MainActivity extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener {
     private FirebaseAuth mAuth;
@@ -39,6 +49,8 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
     private static final int requestCode_SIGN_IN = 1461;//İstediğimiz değeri verebiliriz sabit olmak zorunda (on Aktivity Result için)
     private GoogleApiClient mGoogleApiClient;
     //Buradan sonrası gerekli tanımlamalar
+    private CallbackManager mCallbackManager;
+
     private TextView mTextViewAd, mDurumTextView, mGirisTextview;
     private Button mSignInButtonGoogle, mSignOutButton, mSignInButtonFacebook, mDevamButton, mAnonimButton;
     private String KullaniciID = "null";
@@ -49,6 +61,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
         start();//Layouttaki viewleri atama işlemi için yazılan fonk
         try {
             mAuth = FirebaseAuth.getInstance();//Bağlantı kuruldu
@@ -67,6 +80,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
                     }
                 }
             };
+
             GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                     .requestIdToken(getString(R.string.default_web_client_id))
                     .requestEmail()
@@ -77,8 +91,38 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
                     .build();
         } catch (Exception ex) {
             Log.e("Hata onCreate'de ->", ex.toString());
+            hide();
+
         }
+
+
+        mCallbackManager = CallbackManager.Factory.create();
+
+        mSignInButtonFacebook.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                LoginManager.getInstance().logInWithReadPermissions(MainActivity.this, Arrays.asList("email", "public_profile"));
+                LoginManager.getInstance().registerCallback(mCallbackManager, new FacebookCallback<LoginResult>() {
+                    @Override
+                    public void onSuccess(LoginResult loginResult) {
+                        info = "facebook";
+                        handleFacebookAccessToken(loginResult.getAccessToken());
+                    }
+
+                    @Override
+                    public void onCancel() {
+                        Toast.makeText(MainActivity.this, "Sign in canceled", Toast.LENGTH_SHORT).show();
+                    }
+
+                    @Override
+                    public void onError(FacebookException error) {
+                        Toast.makeText(MainActivity.this, "Something bad happened", Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
+        });
     }
+
 
     private class DownLoadImageTask extends AsyncTask<String, Void, Bitmap> {//Profil fotosu için
         ImageView imageView;
@@ -135,8 +179,8 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
     }
 
     private void show() {
-        mTextViewAd.setVisibility(View.VISIBLE);
         mSignOutButton.setVisibility(View.VISIBLE);
+        mTextViewAd.setVisibility(View.VISIBLE);
         mImageView.setVisibility(View.VISIBLE);
         mDurumTextView.setVisibility(View.VISIBLE);
         mDevamButton.setVisibility(View.VISIBLE);
@@ -145,6 +189,34 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         mAnonimButton.setVisibility(View.INVISIBLE);
         mGirisTextview.setVisibility(View.INVISIBLE);
     }
+
+    private void handleFacebookAccessToken(AccessToken token) {
+
+        try {
+            AuthCredential credential = FacebookAuthProvider.getCredential(token.getToken());
+            mAuth.signInWithCredential(credential)
+                    .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                        @Override
+                        public void onComplete(@NonNull Task<AuthResult> task) {
+                            if (task.isSuccessful()) {
+                                Log.e("Facebook Login", "Oturum Google Hesabı ile açıldı.");
+                                if (AccessToken.getCurrentAccessToken() != null)
+                                    Toast.makeText(MainActivity.this, AccessToken.getCurrentAccessToken().getExpires().toString(), Toast.LENGTH_SHORT).show();
+                            } else {
+                                Log.e("Facebook  Login", "Oturum Açılamadı.", task.getException());
+                                Toast.makeText(MainActivity.this, "Bağlantısı Hatası.",
+                                        Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    });
+            show();
+            mAnonimButton.setVisibility(View.INVISIBLE);
+
+        } catch (Exception ex) {
+            Log.e("ForResult", ex.toString());
+        }
+    }
+
 
     public void gecis(View view) {//Google Map ekranına geçiş
         try {//KullaniciID yolla.
@@ -159,7 +231,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
 
     }
 
-    public void signInFacebook(View view) {//Facebook ile giriş
+    /*public void signInFacebook() {//Facebook ile giriş
         try {
             info = "facebook";
             show();
@@ -167,7 +239,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         } catch (Exception ex) {
             Log.e("Facebook ile Giriş", ex.toString());
         }
-    }
+    }*/
 
     public void signIn(View view) {//google+ ile giriş
         try {
@@ -180,7 +252,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
     }
 
     public void signOut(View view) {//google+ için çıkış
-        if (info == "google") {
+        if (info.equals("google")) {
             try {
                 mAuth.signOut();
                 Auth.GoogleSignInApi.signOut(mGoogleApiClient).setResultCallback(
@@ -195,9 +267,18 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
             } catch (Exception ex) {
                 Log.e("Sign out da hata", ex.toString());
             }
-        } else if (info == "facebook") {
+        } else if (info.equals("facebook")) {
+            try {
+                mAuth.signOut();
+                LoginManager.getInstance().logOut();
+                hide();
+                KullaniciID = "null";
+                Toast.makeText(MainActivity.this, "You are logged out", Toast.LENGTH_SHORT).show();
 
-            hide();
+            } catch (Exception ex) {
+                Log.e("Sign out da hata", ex.toString());
+            }
+
         } else {
             Log.e("Out", "Doğru değer alınamıyor");
         }
@@ -207,6 +288,8 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {//Google için bağlantı
         super.onActivityResult(requestCode, resultCode, data);
+        mCallbackManager.onActivityResult(requestCode, resultCode, data);
+
         if (info.equals("google")) {
             try {
                 Log.d("s", String.valueOf(requestCode));
@@ -239,8 +322,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
                 Log.e("ForResult", ex.toString());
             }
         } else if (info == "facebook") {
-            show();
-            mAnonimButton.setVisibility(View.INVISIBLE);
+            // mCallbackManager.onActivityResult(requestCode, resultCode, data);
         }
     }
 
@@ -259,6 +341,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
             Log.e("onStart", ex.toString());
         }
     }
+
 
     @Override
     public void onStop() {
@@ -284,4 +367,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
             Log.e("Geçiş HATA !", "HATA-->" + ex.toString());
         }
     }
+
 }
+
+

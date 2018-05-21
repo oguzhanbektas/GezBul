@@ -9,6 +9,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 public class SelectionActivity extends AppCompatActivity implements View.OnClickListener {
@@ -20,6 +21,7 @@ public class SelectionActivity extends AppCompatActivity implements View.OnClick
     private String[] xForSpinnerString = {"atm", "accounting", "airport", "amusement_park", "aquarium", "art_gallery", "bakery", "beauty_salon", "book_store", "bowling_alley", "bus_station", "campground", "car_rental", "car_repair", "cemetery", "church", "city_hall", "convenience_store", "courthouse", "library", "lodging", "mosque", "park", "parking", "pharmacy", "restaurant", "rv_park", "stadium", "subway_station", "supermarket", "synagogue", "taxi_stand", "train_station", "zoo"};
     private ArrayAdapter<String> dataAdapterForSpinner;
     Spinner mSpinner;
+    TextView mFavorilerLabel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,8 +41,10 @@ public class SelectionActivity extends AppCompatActivity implements View.OnClick
         mSpinner.setAdapter(dataAdapterForSpinner);
         if (info.equals("anonim")) {
             mbtnListele.setVisibility(View.INVISIBLE);
+            mFavorilerLabel.setVisibility(View.INVISIBLE);
         } else {
             mbtnListele.setVisibility(View.VISIBLE);
+            mFavorilerLabel.setVisibility(View.VISIBLE);
         }
     }
 
@@ -51,6 +55,7 @@ public class SelectionActivity extends AppCompatActivity implements View.OnClick
         mShopping = (Button) findViewById(R.id.btnShopping);
         mHospital = (Button) findViewById(R.id.btnHospital);
         mbtnListele = (Button) findViewById(R.id.btnListele);
+        mFavorilerLabel = (TextView) findViewById(R.id.favorilerLabel);
     }
 
     private void transition(String selectedType) {//Diğer forma geçiş için bütün butonlar için ayrı ayrı yapmak yerine bu yapı kuruldu

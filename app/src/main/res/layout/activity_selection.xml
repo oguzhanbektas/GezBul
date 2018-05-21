@@ -316,6 +316,7 @@
                 android:layout_marginLeft="20dp"
                 android:layout_marginTop="5dp"
                 android:layout_row="8"
+                android:id="@+id/favorilerLabel"
                 android:text="Favorilerim"
                 android:textColor="#000000"
                 android:textSize="24sp" />

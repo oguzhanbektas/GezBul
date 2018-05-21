@@ -15,6 +15,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "42098182623-vg4ra45uh8iapfvokr68e22ckr5d6sq7.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.bektasoguzhan.gezbul",
+            "certificate_hash": "cb6f648461bc6dee0d961ac34fe077884511dbef"
+          }
+        },
+        {
           "client_id": "42098182623-i951gnngsrj9jb7timom3s7veg17tdfn.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {

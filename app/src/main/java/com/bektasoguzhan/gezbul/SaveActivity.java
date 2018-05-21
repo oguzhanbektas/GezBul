@@ -82,6 +82,30 @@ public class SaveActivity extends AppCompatActivity {
         if (mEditTextComment == null) {
             Toast.makeText(this, "Yorum Kısmı Boş Bırakılamaz", Toast.LENGTH_LONG).show();
         } else {
+            AlertDialog.Builder builder = new AlertDialog.Builder(SaveActivity.this);
+            builder.setTitle("GEZBUL");
+            builder.setMessage("Bu yeri güncelemek istediğinize eminmisiniz ? ");
+            builder.setNegativeButton("HAYIR", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int id) {
+                    //HAYIR butonuna basılınca yapılacaklar.Sadece kapanması isteniyorsa boş bırakılacak
+                }
+            });
+            builder.setPositiveButton("EVET", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int id) {
+                    //EVET butonuna basılınca yapılacaklar
+                    try {
+                      DatabaseReference update = FirebaseDatabase.getInstance().getReference().child("users").child(kullaniciID).child(key);
+                      User kullanici = new  User(title, mEditTextComment.getText().toString(), (mSpinner.getSelectedItem().toString()), lat, lon);
+                      String key = update.getKey();
+                      dbRef.child("users").child(kullaniciID + "/" + key).setValue(kullanici);
+                      Log.d("Save", "veri başarı ile güncellendi.");
+                      returnListActivity();
+                    } catch (Exception ex) {
+                        Log.d("Update", "Veriyi güncellerken sorun oluştu." + ex.toString());
+                    }
+                }
+            });
+            builder.show();
 
         }
         Toast.makeText(this, "Update Tuşuna basıldı", Toast.LENGTH_LONG).show();

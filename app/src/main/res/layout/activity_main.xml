@@ -48,7 +48,6 @@
         android:layout_gravity="center"
         android:layout_marginEnd="60dp"
         android:background="@drawable/ic_facebook"
-        android:onClick="signInFacebook"
         android:visibility="visible"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@+id/signIn_button"

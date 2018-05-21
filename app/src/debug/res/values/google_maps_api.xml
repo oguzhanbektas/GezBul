@@ -11,7 +11,7 @@
     Package name:
     7C:93:42:4A:E8:54:83:03:12:7A:36:3F:E0:49:E0:C1:56:A7:66:3A
 
-    SHA-1 certificate fingerprint:
+
     7C:93:42:4A:E8:54:83:03:12:7A:36:3F:E0:49:E0:C1:56:A7:66:3A
 
     Alternatively, follow the directions here:
@@ -19,6 +19,6 @@
 
     Once you have your key (it starts with "AIza"), replace the "google_maps_key"
     string in this file.
-    -->
+    -->  SHA-1 certificate fingerprint:
     <string name="google_maps_key" templateMergeStrategy="preserve" translatable="false">AIzaSyCT25HXjBgyP3zWep7PL8SLut8EvgFCyU0</string>
 </resources>
